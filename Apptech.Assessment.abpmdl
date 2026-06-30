@@ -1,0 +1,114 @@
+{
+  "template": "app",
+  "imports": {
+    "Volo.Abp.LeptonXLiteTheme": {
+      "version": "5.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.Account": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.OpenIddict": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.Identity": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.TenantManagement": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.SettingManagement": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.PermissionManagement": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.FeatureManagement": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    },
+    "Volo.Abp.BlobStoring.Database": {
+      "version": "10.4.1",
+      "isInstalled": true,
+      "creationTime": "06/30/2026 14:29:56 +00:00"
+    }
+  },
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "Apptech.Assessment.Application": {
+      "path": "src/Apptech.Assessment.Application/Apptech.Assessment.Application.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.Application.Tests": {
+      "path": "test/Apptech.Assessment.Application.Tests/Apptech.Assessment.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "Apptech.Assessment.Domain.Shared": {
+      "path": "src/Apptech.Assessment.Domain.Shared/Apptech.Assessment.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.Application.Contracts": {
+      "path": "src/Apptech.Assessment.Application.Contracts/Apptech.Assessment.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.HttpApi": {
+      "path": "src/Apptech.Assessment.HttpApi/Apptech.Assessment.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.HttpApi.Client": {
+      "path": "src/Apptech.Assessment.HttpApi.Client/Apptech.Assessment.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.EntityFrameworkCore.Tests": {
+      "path": "test/Apptech.Assessment.EntityFrameworkCore.Tests/Apptech.Assessment.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "Apptech.Assessment.EntityFrameworkCore": {
+      "path": "src/Apptech.Assessment.EntityFrameworkCore/Apptech.Assessment.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.TestBase": {
+      "path": "test/Apptech.Assessment.TestBase/Apptech.Assessment.TestBase.abppkg",
+      "folder": "test"
+    },
+    "Apptech.Assessment.Domain.Tests": {
+      "path": "test/Apptech.Assessment.Domain.Tests/Apptech.Assessment.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "Apptech.Assessment.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/Apptech.Assessment.HttpApi.Client.ConsoleTestApp/Apptech.Assessment.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "Apptech.Assessment.DbMigrator": {
+      "path": "src/Apptech.Assessment.DbMigrator/Apptech.Assessment.DbMigrator.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.HttpApi.Host": {
+      "path": "src/Apptech.Assessment.HttpApi.Host/Apptech.Assessment.HttpApi.Host.abppkg",
+      "folder": "src"
+    },
+    "Apptech.Assessment.Domain": {
+      "path": "src/Apptech.Assessment.Domain/Apptech.Assessment.Domain.abppkg",
+      "folder": "src"
+    }
+  }
+}

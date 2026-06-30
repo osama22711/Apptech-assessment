@@ -1,0 +1,23 @@
+<Solution>
+    <Configurations>
+        <Platform Name="Any CPU" />
+    </Configurations>
+    <Folder Name="/src/">
+        <Project Path="src/Apptech.Assessment.Domain/Apptech.Assessment.Domain.csproj" />
+        <Project Path="src/Apptech.Assessment.Application/Apptech.Assessment.Application.csproj" />
+        <Project Path="src/Apptech.Assessment.EntityFrameworkCore/Apptech.Assessment.EntityFrameworkCore.csproj" />
+        <Project Path="src/Apptech.Assessment.Domain.Shared/Apptech.Assessment.Domain.Shared.csproj" />
+        <Project Path="src/Apptech.Assessment.Application.Contracts/Apptech.Assessment.Application.Contracts.csproj" />
+        <Project Path="src/Apptech.Assessment.HttpApi/Apptech.Assessment.HttpApi.csproj" />
+        <Project Path="src/Apptech.Assessment.HttpApi.Client/Apptech.Assessment.HttpApi.Client.csproj" />
+        <Project Path="src/Apptech.Assessment.HttpApi.Host/Apptech.Assessment.HttpApi.Host.csproj" />
+        <Project Path="src/Apptech.Assessment.DbMigrator/Apptech.Assessment.DbMigrator.csproj" />
+    </Folder>
+    <Folder Name="/test/">
+        <Project Path="test/Apptech.Assessment.Application.Tests/Apptech.Assessment.Application.Tests.csproj" />
+        <Project Path="test/Apptech.Assessment.EntityFrameworkCore.Tests/Apptech.Assessment.EntityFrameworkCore.Tests.csproj" />
+        <Project Path="test/Apptech.Assessment.TestBase/Apptech.Assessment.TestBase.csproj" />
+        <Project Path="test/Apptech.Assessment.Domain.Tests/Apptech.Assessment.Domain.Tests.csproj" />
+        <Project Path="test/Apptech.Assessment.HttpApi.Client.ConsoleTestApp/Apptech.Assessment.HttpApi.Client.ConsoleTestApp.csproj" />
+    </Folder>
+</Solution>
