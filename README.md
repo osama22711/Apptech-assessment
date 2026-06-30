@@ -1,76 +1,472 @@
-# Apptech.Assessment
+# High-Throughput E-Commerce Engine
 
-## About this solution
+## Overview
 
-This is a layered startup solution based on [Domain Driven Design (DDD)](https://abp.io/docs/latest/framework/architecture/domain-driven-design) practises. All the fundamental ABP modules are already installed. Check the [Application Startup Template](https://abp.io/docs/latest/solution-templates/layered-web-application) documentation for more info.
+This project is a proof-of-concept high-throughput e-commerce engine built with **ABP Framework**, **.NET**, **Angular**, **PostgreSQL**, and **Redis**.
 
-### Pre-requirements
+It demonstrates the main requirements from the technical assessment:
 
-* [.NET10.0+ SDK](https://dotnet.microsoft.com/download/dotnet)
-* [Node v18 or 20](https://nodejs.org/en)
+- Bulk product ingestion from CSV files.
+- Atomic inventory reservation during concurrent order creation.
+- Redis-backed autocomplete for search-as-you-type.
+- Angular RxJS handling for reactive search input.
+- Angular Signals for global cart state.
+- Recovery of expired unpaid orders.
+- Integration testing for concurrent order safety.
 
-### Configurations
+---
 
-The solution comes with a default configuration that works out of the box. However, you may consider to change the following configuration before running your solution:
+## Tech Stack
 
-* Check the `ConnectionStrings` in `appsettings.json` files under the `Apptech.Assessment.HttpApi.Host` and `Apptech.Assessment.DbMigrator` projects and change it if you need.
+- ABP Framework
+- .NET
+- Entity Framework Core
+- PostgreSQL
+- Redis
+- Angular
+- RxJS
+- Angular Signals
+- Docker Compose
+- Swagger / OpenAPI
+- xUnit / Shouldly
 
-### Before running the application
+---
 
-* Run `abp install-libs` command on your solution folder to install client-side package dependencies. This step is automatically done when you create a new solution, if you didn't especially disabled it. However, you should run it yourself if you have first cloned this solution from your source control, or added a new client-side package dependency to your solution.
-* Run `Apptech.Assessment.DbMigrator` to create the initial database. This step is also automatically done when you create a new solution, if you didn't especially disabled it. This should be done in the first run. It is also needed if a new database migration is added to the solution later.
+## Running with Docker Compose
 
-#### Generating a Signing Certificate
+The project includes a `docker-compose.yml` file for running the full solution:
 
-In the production environment, you need to use a production signing certificate. ABP Framework sets up signing and encryption certificates in your application and expects an `openiddict.pfx` file in your application.
+- PostgreSQL
+- Redis
+- Database migrator
+- Backend API
+- Angular frontend
 
-To generate a signing certificate, you can use the following command:
+### 1. Create environment file
+
+Copy the example environment file:
 
 ```bash
-dotnet dev-certs https -v -ep openiddict.pfx -p aee39cff-38cf-49b8-aa72-e5d0c6509c44
+cp .env.example .env
 ```
 
-> `aee39cff-38cf-49b8-aa72-e5d0c6509c44` is the password of the certificate, you can change it to any password you want.
+On Windows PowerShell:
 
-It is recommended to use **two** RSA certificates, distinct from the certificate(s) used for HTTPS: one for encryption, one for signing.
+```powershell
+Copy-Item .env.example .env
+```
 
-For more information, please refer to: [OpenIddict Certificate Configuration](https://documentation.openiddict.com/configuration/encryption-and-signing-credentials.html#registering-a-certificate-recommended-for-production-ready-scenarios)
+### 2. Start all services
 
-> Also, see the [Configuring OpenIddict](https://abp.io/docs/latest/Deployment/Configuring-OpenIddict#production-environment) documentation for more information.
+```bash
+docker compose up --build
+```
 
-### Solution structure
+Or run in detached mode:
 
-This is a layered monolith application that consists of the following applications:
+```bash
+docker compose up -d --build
+```
 
-* `angular`: Angular application.
-* `Apptech.Assessment.DbMigrator`: A console application which applies the migrations and also seeds the initial data. It is useful on development as well as on production environment.
-* `Apptech.Assessment.HttpApi.Host`: ASP.NET Core API application that is used to expose the APIs to the clients.
+### 3. Service URLs
 
-#### Test Projects
+```txt
+Angular:  http://localhost:4200
+API:      http://localhost:8080
+Swagger:  http://localhost:8080/swagger
+Postgres: localhost:5432
+Redis:    localhost:6379
+```
 
-The `test` folder contains the following test projects:
+The `db-migrator` service runs database migrations before the API starts.
 
-* `Apptech.Assessment.Application.Tests`: Application layer tests.
-* `Apptech.Assessment.Domain.Tests`: Domain layer tests.
-* `Apptech.Assessment.EntityFrameworkCore.Tests`: Entity Framework Core integration tests.
+### 4. Stop services
 
+```bash
+docker compose down
+```
 
+To also remove database volume data:
 
-## Deploying the application
+```bash
+docker compose down -v
+```
 
-Deploying an ABP application follows the same process as deploying any .NET or ASP.NET Core application. However, there are important considerations to keep in mind. For detailed guidance, refer to ABP's [deployment documentation](https://abp.io/docs/latest/Deployment/Index).
+---
 
-### Additional resources
+## Running Locally Without Docker for API/Angular
 
+You can also run PostgreSQL and Redis with Docker, then run the backend and frontend locally.
 
-#### Internal Resources
+### 1. Start infrastructure
 
-You can find detailed setup and configuration guide(s) for your solution below:
+```bash
+docker compose up -d postgres redis
+```
 
-* [Angular](./angular/README.md)
+### 2. Build backend
 
-#### External Resources
-You can see the following resources to learn more about your solution and the ABP Framework:
+```bash
+dotnet restore
+dotnet build
+```
 
-* [Web Application Development Tutorial](https://abp.io/docs/latest/tutorials/book-store/part-1)
-* [Application Startup Template](https://abp.io/docs/latest/startup-templates/application/index)
+### 3. Run database migrations
+
+```bash
+dotnet run --project ./src/Apptech.Assessment.DbMigrator
+```
+
+### 4. Run API
+
+```bash
+dotnet run --project ./src/Apptech.Assessment.HttpApi.Host
+```
+
+Open Swagger using the port shown in the API console:
+
+```txt
+https://localhost:<backend-port>/swagger
+```
+
+### 5. Run Angular
+
+```bash
+cd angular
+npm install
+npm start
+```
+
+Or with Yarn:
+
+```bash
+cd angular
+yarn install
+yarn start
+```
+
+Open:
+
+```txt
+http://localhost:4200
+```
+
+Make sure the Angular environment backend URL points to the running API.
+
+---
+
+## Environment Configuration
+
+The solution uses `.env` for Docker Compose variables.
+
+Example values:
+
+```env
+POSTGRES_DB=Assessment
+POSTGRES_USER=root
+POSTGRES_PASSWORD=myPassword
+POSTGRES_PORT=5432
+
+REDIS_PORT=6379
+
+API_HTTP_PORT=8080
+ANGULAR_PORT=4200
+
+API_SELF_URL=http://localhost:8080
+ANGULAR_URL=http://localhost:4200
+AUTHORITY=http://localhost:8080
+REQUIRE_HTTPS_METADATA=false
+```
+
+Backend connection string example:
+
+```json
+"ConnectionStrings": {
+  "Default": "Host=localhost;Port=5432;Database=Assessment;Username=root;Password=myPassword;"
+}
+```
+
+Redis configuration example:
+
+```json
+"Redis": {
+  "IsEnabled": "true",
+  "Configuration": "localhost:6379"
+}
+```
+
+---
+
+## Main Features
+
+## Problem A: High-Volume CSV Product Import
+
+Implemented a CSV import endpoint that processes files without loading the full file into memory.
+
+### Endpoint
+
+```txt
+POST /api/products/import-csv
+```
+
+### Example request
+
+```bash
+curl.exe -k -X POST "https://localhost:<backend-port>/api/products/import-csv" ^
+  -H "accept: application/json" ^
+  -F "file=@products.csv;type=text/csv"
+```
+
+### Expected CSV format
+
+```csv
+Name,Description,Price,StockQuantity
+Keyboard,Mechanical keyboard,50.99,100
+Mouse,Wireless mouse,25.50,200
+Monitor,27 inch monitor,199.99,50
+```
+
+### Implementation notes
+
+- The uploaded file is read as a stream.
+- Rows are processed incrementally.
+- Products are inserted in batches.
+- EF Core tracking is cleared after each batch.
+- Imported products are indexed into Redis for autocomplete.
+
+### Production note
+
+The proof-of-concept parser uses simple CSV parsing. A production version should use a robust CSV parser such as `CsvHelper` to handle quoted fields, escaped characters, commas in descriptions, and malformed rows.
+
+---
+
+## Problem B: Atomic Inventory Management
+
+Order creation reserves product stock atomically.
+
+### Flow
+
+1. Validate basket input.
+2. Normalize duplicate product entries.
+3. Load product pricing information.
+4. Reserve stock for each product.
+5. Fail the entire order if any product has insufficient stock.
+6. Create the order only after all stock reservations succeed.
+
+### Atomic reservation logic
+
+The product repository performs a database-side conditional update equivalent to:
+
+```txt
+UPDATE Products
+SET StockQuantity = StockQuantity - requestedQuantity
+WHERE Id = productId
+AND StockQuantity >= requestedQuantity
+```
+
+If the update affects zero rows, the product does not have enough stock and order creation fails.
+
+This prevents stock from dropping below zero under concurrent flash-sale requests.
+
+---
+
+## Problem C: Redis-Backed Autocomplete
+
+Autocomplete is implemented using Redis prefix indexing.
+
+### Behavior
+
+- Queries shorter than 3 characters return no results.
+- Queries with 3 or more characters search Redis.
+- Imported products are indexed during CSV import.
+
+Example product:
+
+```txt
+Keyboard
+```
+
+Generated prefixes:
+
+```txt
+key
+keyb
+keybo
+keyboa
+keyboar
+keyboard
+```
+
+Redis keys follow this format:
+
+```txt
+autocomplete:products:{prefix}
+```
+
+### Endpoint
+
+ABP exposes the autocomplete application service through auto API controllers.
+
+Check Swagger for the exact route. It appears under `/api/app/...`.
+
+Example route:
+
+```txt
+GET /api/app/product-autocomplete?query=key
+```
+
+---
+
+## Problem D: Angular Reactive Search with RxJS
+
+The Angular search input uses RxJS to handle fast typing and network latency.
+
+The search stream uses:
+
+- `filter`
+- `debounceTime`
+- `distinctUntilChanged`
+- `switchMap`
+- `catchError`
+
+This ensures:
+
+- no request is sent before 3 characters
+- rapid typing does not flood the backend
+- stale requests are cancelled
+- failed requests do not break the UI stream
+
+---
+
+## Problem E: Angular Signals Cart State
+
+The frontend uses Angular Signals for global cart state.
+
+Implemented state includes:
+
+- cart items
+- order status
+- total quantity
+- total price
+- empty cart state
+
+The cart store uses writable signals for state and computed signals for derived values.
+
+Example:
+
+```ts
+private readonly _items = signal<CartItem[]>([]);
+readonly items = this._items.asReadonly();
+
+readonly totalQuantity = computed(() =>
+  this._items().reduce((sum, item) => sum + item.quantity, 0)
+);
+```
+
+### RxJS vs Signals decision
+
+- RxJS is used for asynchronous event streams such as search input and HTTP requests.
+- Signals are used for synchronous UI state such as cart items, totals, and order status.
+
+Signals provide fine-grained reactivity, so only consumers of changed signal values update.
+
+---
+
+## Problem F: Expired Order Recovery
+
+Orders are created as pending payment and reserve stock immediately.
+
+A background worker periodically:
+
+1. Finds expired pending-payment orders.
+2. Restores reserved stock.
+3. Marks the order as expired.
+
+This prevents inventory from remaining stuck when an order is created but never paid.
+
+---
+
+## Tests
+
+Run all tests:
+
+```bash
+dotnet test
+```
+
+Important integration test:
+
+```txt
+OrderServiceIntegrationTests
+```
+
+Test method:
+
+```txt
+CreateAsync_WhenTwoConcurrentOrdersRequestLastRemainingItem_ShouldCreateExactlyOneOrderAndRejectOne
+```
+
+This test verifies:
+
+- initial stock is 1
+- two concurrent order requests are executed
+- exactly one order succeeds
+- exactly one order fails
+- final stock remains 0
+
+This proves the system prevents overselling the last remaining item.
+
+---
+
+## Architecture Notes
+
+The solution keeps ABP's layered structure and applies a vertical-slice organization inside the application layer.
+
+Important folders:
+
+```txt
+Domain/
+  Products/
+  Orders/
+
+EntityFrameworkCore/
+  Products/
+  Orders/
+
+Application/
+  Features/
+    Products/
+      ImportProducts/
+      Autocomplete/
+    Orders/
+      CreateOrder/
+      Recovery/
+```
+
+### Repository usage
+
+Application services do not directly use `DbContext`.
+
+Instead, persistence is accessed through repository abstractions:
+
+```txt
+Application Service
+    -> Repository Interface
+        -> EF Core Repository Implementation
+```
+
+### Redis separation
+
+Redis autocomplete indexing is separated from product persistence because Redis is used as a search/cache index, while PostgreSQL remains the source of truth.
+
+---
+
+## Known Limitations
+
+- CSV parsing is simplified for the proof of concept.
+- EF Core batch inserts are used instead of database-native bulk import.
+- Redis indexing happens after database insertion; PostgreSQL remains the source of truth.
+- Real payment processing is not implemented.
+- Real-time order status updates are represented in frontend state; production could use SignalR, WebSocket, or polling.
+
+---

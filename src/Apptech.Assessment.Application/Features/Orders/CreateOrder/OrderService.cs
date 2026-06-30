@@ -1,8 +1,9 @@
+using Apptech.Assessment.Orders;
+using Apptech.Assessment.Products;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Apptech.Assessment.Orders;
-using Apptech.Assessment.Products;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -27,6 +28,7 @@ public class OrderService : ApplicationService
         _clock = clock;
     }
 
+    [IgnoreAntiforgeryToken]
     [UnitOfWork(isTransactional: true)]
     public async Task<CreateOrderResultDto> CreateAsync(CreateOrderDto input)
     {

@@ -103,7 +103,7 @@ public class AssessmentHttpApiHostModule : AbpModule
             {
                 options.DisableTransportSecurityRequirement = true;
             });
-            
+
             Configure<ForwardedHeadersOptions>(options =>
             {
                 options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
@@ -195,11 +195,47 @@ public class AssessmentHttpApiHostModule : AbpModule
         {
             Configure<AbpVirtualFileSystemOptions>(options =>
             {
-                options.FileSets.ReplaceEmbeddedByPhysical<AssessmentDomainSharedModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Apptech.Assessment.Domain.Shared"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AssessmentDomainModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Apptech.Assessment.Domain"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AssessmentApplicationContractsModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Apptech.Assessment.Application.Contracts"));
-                options.FileSets.ReplaceEmbeddedByPhysical<AssessmentApplicationModule>(Path.Combine(hostingEnvironment.ContentRootPath, $"..{Path.DirectorySeparatorChar}Apptech.Assessment.Application"));
+                ReplaceEmbeddedByPhysicalIfExists<AssessmentDomainSharedModule>(
+                    options,
+                    hostingEnvironment,
+                    "Apptech.Assessment.Domain.Shared"
+                );
+
+                ReplaceEmbeddedByPhysicalIfExists<AssessmentDomainModule>(
+                    options,
+                    hostingEnvironment,
+                    "Apptech.Assessment.Domain"
+                );
+
+                ReplaceEmbeddedByPhysicalIfExists<AssessmentApplicationContractsModule>(
+                    options,
+                    hostingEnvironment,
+                    "Apptech.Assessment.Application.Contracts"
+                );
+
+                ReplaceEmbeddedByPhysicalIfExists<AssessmentApplicationModule>(
+                    options,
+                    hostingEnvironment,
+                    "Apptech.Assessment.Application"
+                );
             });
+        }
+    }
+
+    private static void ReplaceEmbeddedByPhysicalIfExists<TModule>(
+        AbpVirtualFileSystemOptions options,
+        IWebHostEnvironment hostingEnvironment,
+        string projectFolderName
+    )
+    {
+        var physicalPath = Path.Combine(
+            hostingEnvironment.ContentRootPath,
+            $"..{Path.DirectorySeparatorChar}{projectFolderName}"
+        );
+
+        if (Directory.Exists(physicalPath))
+        {
+            options.FileSets.ReplaceEmbeddedByPhysical<TModule>(physicalPath);
         }
     }
 

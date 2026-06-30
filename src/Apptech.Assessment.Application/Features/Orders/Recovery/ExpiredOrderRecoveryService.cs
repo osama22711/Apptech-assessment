@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
-using Apptech.Assessment.Orders;
+﻿using Apptech.Assessment.Orders;
 using Apptech.Assessment.Products;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Timing;
 using Volo.Abp.Uow;
@@ -25,6 +26,7 @@ public class ExpiredOrderRecoveryService : ApplicationService
         _clock = clock;
     }
 
+    [IgnoreAntiforgeryToken]
     [UnitOfWork(isTransactional: true)]
     public virtual async Task<int> RecoverExpiredOrdersAsync()
     {

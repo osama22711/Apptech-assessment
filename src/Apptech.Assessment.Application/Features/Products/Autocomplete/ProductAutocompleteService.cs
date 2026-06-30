@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Volo.Abp.Application.Services;
 
@@ -13,6 +14,7 @@ public class ProductAutocompleteService : ApplicationService
         _autocompleteIndex = autocompleteIndex;
     }
 
+    [IgnoreAntiforgeryToken]
     public async Task<List<ProductAutocompleteItemDto>> GetAsync(string query)
     {
         if (string.IsNullOrWhiteSpace(query) || query.Trim().Length < 3)

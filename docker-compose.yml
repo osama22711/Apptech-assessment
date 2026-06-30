@@ -1,21 +1,81 @@
 services:
   postgres:
     image: postgres:16
-    container_name: postgres
+    container_name: ${POSTGRES_CONTAINER_NAME}
     environment:
-      POSTGRES_DB: Assessment
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: myPassword
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   redis:
     image: redis:7
-    container_name: redis
+    container_name: ${REDIS_CONTAINER_NAME}
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
+
+  db-migrator:
+    build:
+      context: .
+      dockerfile: src/Apptech.Assessment.DbMigrator/Dockerfile
+    container_name: db-migrator
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};"
+      Redis__IsEnabled: "true"
+      Redis__Configuration: "redis:6379"
+
+  api:
+    build:
+      context: .
+      dockerfile: src/Apptech.Assessment.HttpApi.Host/Dockerfile
+    container_name: ${API_CONTAINER_NAME}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      db-migrator:
+        condition: service_completed_successfully
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
+      ASPNETCORE_URLS: "http://+:8080"
+
+      ConnectionStrings__Default: "Host=postgres;Port=5432;Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD};"
+
+      Redis__IsEnabled: "true"
+      Redis__Configuration: "redis:6379"
+
+      App__SelfUrl: ${API_SELF_URL}
+      App__CorsOrigins: "${ANGULAR_URL},http://localhost:${ANGULAR_PORT}"
+
+      AuthServer__Authority: ${AUTHORITY}
+      AuthServer__RequireHttpsMetadata: ${REQUIRE_HTTPS_METADATA}
+    ports:
+      - "${API_HTTP_PORT}:8080"
+
+  angular:
+    build:
+      context: ./angular
+      dockerfile: Dockerfile
+    container_name: ${ANGULAR_CONTAINER_NAME}
+    depends_on:
+      - api
+    ports:
+      - "${ANGULAR_PORT}:80"
 
 volumes:
   postgres_data:

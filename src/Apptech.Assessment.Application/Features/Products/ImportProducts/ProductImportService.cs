@@ -1,6 +1,7 @@
 ﻿using Apptech.Assessment.Features.Products.Autocomplete;
 using Apptech.Assessment.Products;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -27,6 +28,7 @@ public class ProductImportService : ApplicationService
         _autocompleteIndex = autocompleteIndex;
     }
 
+    [IgnoreAntiforgeryToken]
     public async Task<ImportProductsResultDto> ImportAsync(IFormFile file)
     {
         if (file == null || file.Length == 0)
