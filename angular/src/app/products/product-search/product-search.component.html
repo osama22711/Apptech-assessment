@@ -1,0 +1,28 @@
+<section class="product-search">
+    <label for="product-search-input">Search products</label>
+    <input id="product-search-input" type="text" [formControl]="searchControl"
+        placeholder="Type at least 3 characters..." autocomplete="off" />
+    <small>
+        Uses RxJS: filter, debounceTime, distinctUntilChanged, switchMap.
+    </small>
+    <p *ngIf="isLoading()">Loading suggestions...</p>
+    <p *ngIf="errorMessage() as error" class="error">
+        {{ error }}
+    </p>
+    <ul *ngIf="results().length > 0" class="suggestions">
+        <li *ngFor="let product of results()">
+            <span>{{ product.name }}</span>
+            <button type="button" (click)="addToCart(product)">
+                Add
+            </button>
+        </li>
+    </ul>
+    <p *ngIf="
+      searchControl.value.length >= 3 &&
+      !isLoading() &&
+      results().length === 0 &&
+      !errorMessage()
+    ">
+        No products found.
+    </p>
+</section>

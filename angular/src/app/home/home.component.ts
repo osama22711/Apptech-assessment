@@ -1,20 +1,23 @@
-import { Component, inject } from '@angular/core';
-import { AuthService, LocalizationPipe } from '@abp/ng.core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { CartStore, OrderStatus } from '../cart/cart.store';
+import { ProductSearchComponent } from '../products/product-search/product-search.component';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
+  imports: [CommonModule, ProductSearchComponent],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  imports: [LocalizationPipe]
+  styleUrl: './home.component.scss',
 })
 export class HomeComponent {
-  private authService = inject(AuthService);
+  constructor(public readonly cartStore: CartStore) { }
 
-  get hasLoggedIn(): boolean {
-    return this.authService.isAuthenticated
+  simulateOrderStatus(status: OrderStatus): void {
+    this.cartStore.setOrderStatus(status);
   }
 
-  login() {
-    this.authService.navigateToLogin();
+  clearCart(): void {
+    this.cartStore.clear();
   }
 }
