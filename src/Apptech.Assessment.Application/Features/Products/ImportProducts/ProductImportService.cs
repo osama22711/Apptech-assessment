@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Apptech.Assessment.Features.Products.Autocomplete;
+using Apptech.Assessment.Products;
+using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
-using Apptech.Assessment.Products;
-using Microsoft.AspNetCore.Http;
 using Volo.Abp;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Uow;
@@ -14,11 +15,16 @@ public class ProductImportService : ApplicationService
 {
     private const int BatchSize = 2000;
 
-    private readonly IProductRepository _productRepository;
 
-    public ProductImportService(IProductRepository productRepository)
+    private readonly IProductRepository _productRepository;
+    private readonly IProductAutocompleteIndex _autocompleteIndex;
+
+    public ProductImportService(
+        IProductRepository productRepository,
+        IProductAutocompleteIndex autocompleteIndex)
     {
         _productRepository = productRepository;
+        _autocompleteIndex = autocompleteIndex;
     }
 
     public async Task<ImportProductsResultDto> ImportAsync(IFormFile file)
@@ -105,5 +111,6 @@ public class ProductImportService : ApplicationService
     protected virtual async Task InsertBatchAsync(List<Product> products)
     {
         await _productRepository.InsertManyAsync(products);
+        await _autocompleteIndex.IndexProductsAsync(products);
     }
 }
