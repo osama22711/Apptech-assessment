@@ -10,6 +10,8 @@ public interface IProductRepository
         IReadOnlyCollection<Guid> productIds
     );
 
+    Task InsertManyAsync(IReadOnlyCollection<Product> products);
+
     Task<bool> TryReserveStockAsync(Guid productId, int quantity);
 
     Task ReleaseStockAsync(Guid productId, int quantity);

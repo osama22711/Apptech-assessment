@@ -18,6 +18,22 @@ public class ProductRepository : IProductRepository, ITransientDependency
         _dbContext = dbContext;
     }
 
+    public async Task InsertManyAsync(IReadOnlyCollection<Product> products)
+    {
+        _dbContext.ChangeTracker.AutoDetectChangesEnabled = false;
+
+        try
+        {
+            await _dbContext.Products.AddRangeAsync(products);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ChangeTracker.Clear();
+        }
+        finally
+        {
+            _dbContext.ChangeTracker.AutoDetectChangesEnabled = true;
+        }
+    }
+
     public async Task<Dictionary<Guid, ProductOrderReadModel>> GetOrderInfoByIdsAsync(
         IReadOnlyCollection<Guid> productIds
     )

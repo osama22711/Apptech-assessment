@@ -15,12 +15,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="5.0.17" />
     <PackageReference Include="Volo.Abp.PermissionManagement.Application" Version="10.4.1" />
     <PackageReference Include="Volo.Abp.FeatureManagement.Application" Version="10.4.1" />
     <PackageReference Include="Volo.Abp.SettingManagement.Application" Version="10.4.1" />
     <PackageReference Include="Volo.Abp.Account.Application" Version="10.4.1" />
     <PackageReference Include="Volo.Abp.Identity.Application" Version="10.4.1" />
     <PackageReference Include="Volo.Abp.TenantManagement.Application" Version="10.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Orders\Recovery\" />
+    <Folder Include="Features\Products\Autocomplete\" />
   </ItemGroup>
 
 </Project>
