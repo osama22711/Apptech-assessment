@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Apptech.Assessment.Domain\Apptech.Assessment.Domain.csproj" />
     <ProjectReference Include="..\Apptech.Assessment.Application.Contracts\Apptech.Assessment.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Apptech.Assessment.EntityFrameworkCore\Apptech.Assessment.EntityFrameworkCore.csproj" />
   </ItemGroup>
 
   <ItemGroup>

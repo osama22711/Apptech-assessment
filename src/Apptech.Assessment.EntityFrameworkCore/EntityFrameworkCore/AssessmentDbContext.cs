@@ -1,3 +1,5 @@
+using Apptech.Assessment.Orders;
+using Apptech.Assessment.Products;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -9,9 +11,9 @@ using Volo.Abp.EntityFrameworkCore.Modeling;
 using Volo.Abp.FeatureManagement.EntityFrameworkCore;
 using Volo.Abp.Identity;
 using Volo.Abp.Identity.EntityFrameworkCore;
+using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
-using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 
@@ -26,7 +28,9 @@ public class AssessmentDbContext :
     IIdentityDbContext
 {
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
-
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
 
     #region Entities from the modules
 
@@ -87,5 +91,63 @@ public class AssessmentDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+
+        builder.Entity<Product>(b =>
+        {
+            b.ToTable("Products");
+
+            b.HasKey(x => x.Id);
+
+            b.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(256);
+
+            b.Property(x => x.Description)
+                .HasMaxLength(2048);
+
+            b.Property(x => x.Price)
+                .HasPrecision(18, 2);
+
+            b.Property(x => x.StockQuantity)
+                .IsRequired();
+
+            b.HasIndex(x => x.Name);
+        });
+
+        builder.Entity<Order>(b =>
+        {
+            b.ToTable("Orders");
+
+            b.HasKey(x => x.Id);
+
+            b.Property(x => x.Status)
+                .IsRequired();
+
+            b.Property(x => x.ExpiresAtUtc)
+                .IsRequired();
+
+            b.HasMany(x => x.Items)
+                .WithOne()
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            b.HasIndex(x => new { x.Status, x.ExpiresAtUtc });
+        });
+
+        builder.Entity<OrderItem>(b =>
+        {
+            b.ToTable("OrderItems");
+
+            b.HasKey(x => x.Id);
+
+            b.Property(x => x.Quantity)
+                .IsRequired();
+
+            b.Property(x => x.UnitPrice)
+                .HasPrecision(18, 2);
+
+            b.HasIndex(x => x.OrderId);
+            b.HasIndex(x => x.ProductId);
+        });
     }
 }

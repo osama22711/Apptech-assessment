@@ -16,7 +16,8 @@ namespace Apptech.Assessment.EntityFrameworkCore;
 [DependsOn(
     typeof(AssessmentApplicationTestModule),
     typeof(AssessmentEntityFrameworkCoreModule),
-    typeof(AbpEntityFrameworkCoreSqliteModule)
+    typeof(AbpEntityFrameworkCoreSqliteModule),
+    typeof(AssessmentApplicationModule)
 )]
 public class AssessmentEntityFrameworkCoreTestModule : AbpModule
 {
